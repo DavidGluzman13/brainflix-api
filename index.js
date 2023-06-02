@@ -61,7 +61,7 @@ router.put("/:id", (req, res) => {
 
     res.json(updatedVideo);
   } else {
-    res.status(404).json({ message: "Video not found" });
+    res.status(404).json({ message: "Video not found" }pb);
   }
 });
 

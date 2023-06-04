@@ -27,12 +27,12 @@ function setVideos(videos) {
 }
 
 // Creating a new video
-router.post("/", (req, res) => {
+router.post("/videos", (req, res) => {
   const newVideo = {
     id: crypto.randomUUID(),
     title: req.body.title,
     channel: req.body.channel,
-    image: "https://i.imgur.com/MMDMgD7.jpg",
+    image: "http://localhost:8080/images/image8.jpeg",
   };
   videos.push(newVideo);
   setVideos(videos);

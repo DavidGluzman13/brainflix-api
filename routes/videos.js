@@ -3,16 +3,25 @@ const fs = require("fs");
 const crypto = require("crypto");
 
 const filepath = "./data/videos.json";
-const videosJson = fs.readFileSync(filepath);
-const videos = JSON.parse(videosJson);
+
+function getVideos() {
+  const videosJson = fs.readFileSync(filepath);
+  return JSON.parse(videosJson);
+}
+
+function setVideos(videos) {
+  fs.writeFileSync(filepath, JSON.stringify(videos, null, 2));
+}
 
 // Getting all the videos from the JSON file
 router.get("/", (req, res) => {
+  const videos = getVideos();
   res.send(videos);
 });
 
-// Gettin the single video ID
+// Getting the single video by ID
 router.get("/:id", (req, res) => {
+  const videos = getVideos();
   const video = videos.find((video) => video.id === req.params.id);
 
   if (video) {
@@ -22,18 +31,24 @@ router.get("/:id", (req, res) => {
   }
 });
 
-function setVideos(videos) {
-  fs.writeFileSync(filepath, JSON.stringify(videos, null, 2));
-}
-
 // Creating a new video
-router.post("/videos", (req, res) => {
+router.post("/", (req, res) => {
+  const videos = getVideos();
+
   const newVideo = {
     id: crypto.randomUUID(),
     title: req.body.title,
     channel: req.body.channel,
     image: "http://localhost:8080/images/image8.jpeg",
+    description: req.body.description,
+    views: "0",
+    likes: "0",
+    duration: "1:00",
+    video: "https://project-2-api.herokuapp.com/stream",
+    timestamp: new Date().toISOString(),
+    comments: [],
   };
+
   videos.push(newVideo);
   setVideos(videos);
 
@@ -41,41 +56,3 @@ router.post("/videos", (req, res) => {
 });
 
 module.exports = router;
-
-//-------------------------------------------------------------//
-
-// // Update an existing video
-// router.put("/videos/:id", (req, res) => {
-//     const videos = getVideos();
-//     const videoIndex = videos.findIndex((video) => video.id === req.params.id);
-
-//     if (videoIndex !== -1) {
-//       const updatedVideo = {
-//         id: req.params.id,
-//       };
-
-//       videos[videoIndex] = updatedVideo;
-
-//       setVideos(videos);
-
-//       res.json(updatedVideo);
-//     } else {
-//       res.status(404).json({ message: "Video not found" });
-//     }
-//   });
-
-// // Delete a video
-// router.delete("/videos/:id", (req, res) => {
-//   const videos = getVideos();
-//   const videoIndex = videos.findIndex((video) => video.id === req.params.id);
-
-//   if (videoIndex !== -1) {
-//     const deletedVideo = videos.splice(videoIndex, 1)[0];
-
-//     setVideos(videos);
-
-//     res.json(deletedVideo);
-//   } else {
-//     res.status(404).json({ message: "Video not found" });
-//   }
-// });
